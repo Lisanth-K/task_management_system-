@@ -1,13 +1,16 @@
 import axios from 'axios';
 
 // Create an Axios instance that handles both development and production base URLs correctly.
-// In development, the Vite proxy handles `/api/tasks` requests.
-// In production, it uses VITE_API_URL from your .env file and appends `/api/tasks`.
-const baseURL = import.meta.env.PROD 
-  ? `${import.meta.env.VITE_API_URL}/api/tasks`
-  : '/api/tasks';
+const getBaseUrl = () => {
+  if (import.meta.env.PROD) {
+    // Remove trailing slash if it exists in the env variable
+    const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || '';
+    return `${apiUrl}/api/tasks`;
+  }
+  return '/api/tasks';
+};
 
-const API = axios.create({ baseURL });
+const API = axios.create({ baseURL: getBaseUrl() });
 
 export const fetchTasks = async (params) => {
   const response = await API.get('', { params });
