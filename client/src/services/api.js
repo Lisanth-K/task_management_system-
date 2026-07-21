@@ -1,30 +1,35 @@
 import axios from 'axios';
 
-// Base URL for API requests. 
-// Vite proxy forwards `/api` to `http://localhost:5000` in dev mode.
-const API_URL = '/api/tasks';
+// Create an Axios instance that handles both development and production base URLs correctly.
+// In development, the Vite proxy handles `/api/tasks` requests.
+// In production, it uses VITE_API_URL from your .env file and appends `/api/tasks`.
+const baseURL = import.meta.env.PROD 
+  ? `${import.meta.env.VITE_API_URL}/api/tasks`
+  : '/api/tasks';
+
+const API = axios.create({ baseURL });
 
 export const fetchTasks = async (params) => {
-  const response = await axios.get(API_URL, { params });
+  const response = await API.get('', { params });
   return response.data;
 };
 
 export const fetchTaskStats = async () => {
-  const response = await axios.get(`${API_URL}/stats`);
+  const response = await API.get('/stats');
   return response.data;
 };
 
 export const createTask = async (taskData) => {
-  const response = await axios.post(API_URL, taskData);
+  const response = await API.post('', taskData);
   return response.data;
 };
 
 export const updateTask = async (id, taskData) => {
-  const response = await axios.put(`${API_URL}/${id}`, taskData);
+  const response = await API.put(`/${id}`, taskData);
   return response.data;
 };
 
 export const deleteTask = async (id) => {
-  const response = await axios.delete(`${API_URL}/${id}`);
+  const response = await API.delete(`/${id}`);
   return response.data;
 };
